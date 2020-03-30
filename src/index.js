@@ -45,7 +45,7 @@ const atlasInit = async (node) => {
     lightAltitude: 10,
     lightIntensity: .2,
   })
-  
+
   const selectionMarkers = DotAtlas.createLayer({
     type: 'marker',
     points: [],
@@ -182,7 +182,7 @@ const atlasInit = async (node) => {
     window.requestAnimationFrame(onRaF)
   }
 
-  updateOverlay('project')
+  // updateOverlay('project')
   window.requestAnimationFrame(onRaF)
 
   dotatlas.saveView = () => {
@@ -197,6 +197,6 @@ const atlasInit = async (node) => {
 }
 
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
   atlasInit('atlas-view')
 })
