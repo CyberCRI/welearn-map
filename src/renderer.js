@@ -1,6 +1,6 @@
 /* eslint no-multi-spaces: 0 */
 import FileSaver from 'file-saver'
-import Mousetrap from '@ilearn/modules/utilities/mousetrap'
+import Mousetrap from './utils/mousetrap'
 import _throttle from 'lodash/throttle'
 import _debounce from 'lodash/debounce'
 import _flatMap from 'lodash/flatMap'
