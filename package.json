@@ -23,6 +23,7 @@
     "effector-react": "^20.6.3",
     "file-saver": "^2.0.2",
     "framer-motion": "^1.10.3",
+    "immutable": "^4.0.0-rc.12",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
