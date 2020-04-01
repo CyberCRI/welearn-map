@@ -16,7 +16,7 @@ import { LayerProps, KeyBinding } from './consts'
 export const setupMapView = async (conf, baseLayer) => {
   const elevation = DotAtlas.createLayer({
     type: 'elevation',
-    points: baseLayer,
+    points: baseLayer.points,
     ...LayerProps.elevation,
   })
 
@@ -40,7 +40,7 @@ export const setupMapView = async (conf, baseLayer) => {
 
   const markers = DotAtlas.createLayer({
     type: 'marker',
-    points: baseLayer,
+    points: baseLayer.labels,
     ...LayerProps.markers,
 
     onPointHover: (e) => {
@@ -62,7 +62,7 @@ export const setupMapView = async (conf, baseLayer) => {
 
   const labels = DotAtlas.createLayer({
     type: 'label',
-    points: baseLayer,
+    points: baseLayer.labels,
     ...LayerProps.labels,
   })
 
