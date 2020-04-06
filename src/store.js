@@ -1,6 +1,9 @@
 import { createEvent, createEffect, createStore } from 'effector'
 import { Set } from 'immutable'
 import queryStrings from 'query-string'
+import _ from 'lodash'
+import { conceptIndexSet, resourceIndex, matchQuerySet } from './query-index'
+
 
 /**
  *
@@ -52,6 +55,25 @@ export const selectedConcepts = createStore(Set())
 
 export const userResources = createStore([])
   .on(fetchResources.done, (state, r) => [...state, ...r.result])
+  .reset(didPickLayer)
+
+export const conceptsQuerySet = selectedConcepts
+  .map((state, args) => conceptIndexSet(state.toJS()))
+
+
+export const userResourcesIndex = userResources
+  .map((state) => resourceIndex(state))
+
+export const matchingConceptSet = conceptsQuerySet
+  .map((state) => matchQuerySet(userResourcesIndex.getState(), state))
+
+export const matchingResourceSet = matchingConceptSet
+  .map((state) => {
+    return _(userResources.getState())
+      .filter((r) => state.has(r.resource_id))
+      .uniqBy('resource_id')
+      .value()
+  })
   .reset(didPickLayer)
 
 $layerSource

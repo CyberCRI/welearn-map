@@ -7,15 +7,16 @@ import _flatMap from 'lodash/flatMap'
 import { Map } from 'immutable'
 
 import setupDebugger from './renderer-debugger'
-import { nodePicker, selectedConcepts, userResources } from './store'
-import { fetchBaseLayer } from './layers'
+import { nodePicker, selectedConcepts, userResources, didPickLayer, $layerSource } from './store'
+import { fetchBaseLayer, request, fetchSelectionPoints } from './layers'
 
 import { LayerProps, KeyBinding } from './consts'
 
 
 
 export const setupMapView = async (conf) => {
-  const layer = await fetchBaseLayer();
+  const layerData = await request().then((nodes) => {return nodes.results});
+  const layer = layerData.map((nodes) => {return fetchBaseLayer(nodes)});
   var allPoints = [].concat.apply([], layer);
 
   const elevation = DotAtlas.createLayer({
@@ -56,8 +57,15 @@ export const setupMapView = async (conf) => {
     },
     onPointClick: (e) => {
       const filteredPts = e.points.filter((pt) => pt.canPick)
+      const resourcesSelection = fetchSelectionPoints(filteredPts, layerData);
       if (!(e.ctrlKey || e.shiftKey)) {
         nodePicker.replace(filteredPts)
+        const event = new CustomEvent("searchMap",{ 
+          detail:  {
+              type: "add",
+              selection: resourcesSelection
+        }});
+        dispatchEvent(event)
       } else {
         nodePicker.merge(filteredPts)
       }
@@ -255,6 +263,8 @@ export const setupMapView = async (conf) => {
     const items = _flatMap(resources, 'concepts').map((c) => [ c.wikidata_id, c ])
     updateLayers(Map(items))
   })
+  
+  $layerSource.watch(didPickLayer, updateLayers)
 
   window.addEventListener('resize', eventTaps.didResizeViewport)
 

@@ -20,8 +20,8 @@ const takeValues = (concept, lang) => {
   }
 }
 
-const request = async () => {
-  const r = await fetch('https://welearn.cri-paris.org/api/resources/bot/projects@import.bot?limit=400&skip=0', {
+export const request = async () => {
+  const r = await fetch('https://welearn.cri-paris.org/api/resources/bot/projects@import.bot?limit=600&skip=0', {
     method: 'get',
     mode: 'cors',
     headers: { 'Content-Type': 'application/json' },
@@ -29,23 +29,33 @@ const request = async () => {
   return await r.json()
 }
 
-export const fetchBaseLayer = async () => {
-  return await request()
-    .then((nodes) => {
-      return nodes.results.map(resources => {
-        return resources.concepts.map(p => {
-          return {
-            x: p.x_map_en,
-            y: p.y_map_en,
-            userData: true,
-            ...(takeValues(p, 'en') || takeValues(p, 'fr')),
-            elevation: .8,
-            markerShape: 'circle',
-            markerSize: 4,
-            labelOpacity: 1,
-            labelPriority: (p.n_items || 1),
-          }
-        }).filter(p => p.x && p.y);
-      })
-    });
+export const fetchBaseLayer = (nodes) => {
+  return nodes.concepts.map(p => {
+    return {
+      x: p.x_map_en,
+      y: p.y_map_en,
+      canPick: true,
+      userData: true,
+      ...(takeValues(p, 'en') || takeValues(p, 'fr')),
+      elevation: .8,
+      markerShape: 'circle',
+      markerSize: 4,
+      labelOpacity: 1,
+      labelPriority: (p.n_items || 1),
+      cuid: p.cuid
+    }
+  }).filter(p => p.x && p.y);
+};
+
+export const fetchSelectionPoints = (points, resources) => {
+  const concepts = Array.from(new Set(points.map((c) => c.cuid)));
+  let matchingResources = []
+  resources.forEach(resource => {
+    resource.concepts.forEach(concept => {
+      if(concepts.includes(concept.cuid)) {
+        matchingResources.push(resource);
+      }
+    })
+  });
+  return matchingResources.filter((x, i, a) => a.indexOf(x) === i);
 }
