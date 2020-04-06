@@ -16,7 +16,17 @@
     "sass": "^1.26.3"
   },
   "dependencies": {
+    "@babel/runtime": "^7.9.2",
+    "d3": "^5.15.0",
+    "dat.gui": "^0.7.6",
+    "effector": "^20.13.4",
+    "effector-react": "^20.6.3",
     "file-saver": "^2.0.2",
-    "lodash": "^4.17.15"
+    "framer-motion": "^1.10.3",
+    "immutable": "^4.0.0-rc.12",
+    "lodash": "^4.17.15",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-use": "^13.27.1"
   }
 }
