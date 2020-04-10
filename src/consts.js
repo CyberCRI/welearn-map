@@ -86,7 +86,6 @@ export const LayerProps = {
 // Used with dat.GUI for control properties.
 export const LayerPropConstraints = {
   elevation: {
-    colorBands:               ColorBands,
     contourWidth:             [0,   10, .1],
     elevationOffset:          [-1,  1,  .001],
     elevationPow:             [0,   10, .1],

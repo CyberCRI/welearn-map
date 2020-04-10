@@ -75,6 +75,3 @@ export const matchingResourceSet = matchingConceptSet
       .value()
   })
   .reset(didPickLayer)
-
-$layerSource
-  .watch((layer) => fetchResources({ layer }))
