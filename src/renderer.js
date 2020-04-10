@@ -187,84 +187,10 @@ export const setupMapView = async (conf) => {
         : debugUi.close()
     })
 
-  const deactivateLayers = async () => {
-    markers.set('visible', false)
-    labels.set('visible', false)
-
-    atlas.redraw()
-  }
-
-  const activateLayers = async () => {
-    markers.set('visible', true)
-    markers.update('markerOpacity')
-    labels.set('visible', true)
-    labels.update('labelOpacity')
-    labels.update('labelPriority')
-    labels.update('labelVisibilityScales')
-    elevation.update('elevation')
-    atlas.redraw()
-  }
-
-  const updateLayers = async (pts) => {
-    await deactivateLayers()
-    let pt
-
-    markers
-      .get('points')
-      .forEach((p) => {
-        pt = pts.get(p.wikidata_id)
-        if (pt) {
-          p.markerOpacity = Math.max(0.5, 1 - (1 / (p.n_items || 1)))
-          p.canPick = true
-        } else {
-          p.markerOpacity = 0
-          p.canPick = false
-        }
-      })
-    markers.update('markerOpacity')
-
-    labels
-      .get('points')
-      .forEach((p) => {
-        pt = pts.get(p.wikidata_id)
-        if (pt) {
-          p.labelOpacity = 1
-          p.labelPriority = Math.max(0.1, 1 - (1 / (p.n_items || 1)))
-        } else {
-          p.labelOpacity = 0
-          p.labelPriority = 0
-        }
-      })
-    labels.update('labelOpacity')
-    labels.update('labelPriority')
-    labels.update('labelVisibilityScales')
-
-    elevation
-      .get('points')
-      .forEach((p) => {
-        pt = pts.get(p.wikidata_id)
-        if (pt) {
-          p.elevation = .8
-        } else {
-          p.elevation = 0.01
-        }
-      })
-    elevation.update('elevation')
-
-    await activateLayers()
-  }
-  deactivateLayers()
-
   selectedConcepts.watch((selection) => {
     selectionOutline.set('points', selection.toJS())
     atlas.redraw()
   })
-  userResources.watch((resources) => {
-    const items = _flatMap(resources, 'concepts').map((c) => [ c.wikidata_id, c ])
-    updateLayers(Map(items))
-  })
-  
-  $layerSource.watch(didPickLayer, updateLayers)
 
   window.addEventListener('resize', eventTaps.didResizeViewport)
 
