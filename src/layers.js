@@ -53,7 +53,7 @@ export const fetchSelectionPoints = (points, resources) => {
   resources.forEach(resource => {
     resource.concepts.forEach(concept => {
       if(concepts.includes(concept.cuid)) {
-        matchingResources.push(resource);
+        matchingResources.push(concept.wikidata_id);
       }
     })
   });

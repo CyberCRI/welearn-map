@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { setupMapView } from '../../../../src/renderer'
+import { setupMapView } from 'welearn-map/src/renderer'
 import '../assets/dotatlas'
 
 export default {
