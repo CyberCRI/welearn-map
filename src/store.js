@@ -1,6 +1,5 @@
 import { createEvent, createEffect, createStore } from 'effector'
 import { Set } from 'immutable'
-import queryStrings from 'query-string'
 import _ from 'lodash'
 import { conceptIndexSet, resourceIndex, matchQuerySet } from './query-index'
 
