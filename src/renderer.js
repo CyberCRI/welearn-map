@@ -4,7 +4,6 @@ import Mousetrap from './utils/mousetrap'
 import _throttle from 'lodash/throttle'
 import _debounce from 'lodash/debounce'
 import _flatMap from 'lodash/flatMap'
-import { Map } from 'immutable'
 
 import setupDebugger from './renderer-debugger'
 import { nodePicker, selectedConcepts, userResources, didPickLayer, $layerSource } from './store'
@@ -18,6 +17,10 @@ export const setupMapView = async (conf) => {
   const layerData = await request().then((nodes) => {return nodes.results});
   const layer = layerData.map((nodes) => {return fetchBaseLayer(nodes)});
   var allPoints = [].concat.apply([], layer);
+
+  if(conf.settings){
+    _.merge(LayerProps, conf.settings);
+  }
 
   const elevation = DotAtlas.createLayer({
     type: 'elevation',
@@ -57,15 +60,8 @@ export const setupMapView = async (conf) => {
     },
     onPointClick: (e) => {
       const filteredPts = e.points.filter((pt) => pt.canPick)
-      const resourcesSelection = fetchSelectionPoints(filteredPts, layerData);
       if (!(e.ctrlKey || e.shiftKey)) {
         nodePicker.replace(filteredPts)
-        const event = new CustomEvent("searchMap",{ 
-          detail:  {
-              type: "add",
-              selection: resourcesSelection
-        }});
-        dispatchEvent(event)
       } else {
         nodePicker.merge(filteredPts)
       }
@@ -190,9 +186,18 @@ export const setupMapView = async (conf) => {
   selectedConcepts.watch((selection) => {
     selectionOutline.set('points', selection.toJS())
     atlas.redraw()
+    const resourcesSelection = fetchSelectionPoints(selection.toJS(), layerData)
+    const event = new CustomEvent("searchMap",{ 
+      detail:  {
+          type: "add",
+          selection: resourcesSelection
+    }});
+    dispatchEvent(event)
+
   })
 
   window.addEventListener('resize', eventTaps.didResizeViewport)
+  window.addEventListener("resetSearch", nodePicker.reset());
 
   return atlas
 }
