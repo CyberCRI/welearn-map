@@ -1,12 +1,12 @@
 <template>
-    <div class="container">
+    <div>
         <h1>Test Welearn Map</h1>
         <div id="atlas"></div>
     </div>
 </template>
 
 <script>
-import { setupMapView } from 'welearn-map/src/renderer'
+import { setupMapView } from '../../../../src/renderer'
 import '../assets/dotatlas'
 
 export default {
@@ -31,7 +31,9 @@ export default {
         background-color: white;
     }
     #atlas {
-        width: 1000px;
-        height: 400px;
+        width: 50%;
+        height: 50vh;
     }
+
+    div#atlas { text-align: left !important;}
 </style>

@@ -66,7 +66,7 @@ export const LayerProps = {
     markerSizeMultiplier: 2,
     markerStrokeOpacity:  0,
     markerStrokeWidth:    0,
-    minAbsoluteMarkerSize: 1,
+    minAbsoluteMarkerSize: 3.5,
     pointHoverRadiusMultiplier: 10,
     visible: true,
   },
