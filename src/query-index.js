@@ -16,6 +16,9 @@
 //
 // The goal here is to transform {R} with {C}q as:
 //  { <wi = w(R, {C}q), Ri> : wi > 0 ∀ Ri ∈ {R} }
+//
+// The note above are outdated since we've moved those to the server.
+// [!todo]
 import _ from 'lodash'
 import { Set, Map } from 'immutable'
 

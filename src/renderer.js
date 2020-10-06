@@ -80,7 +80,7 @@ export const setupMapView = async (conf) => {
     hoverMarkers,
     hoverOutline,
     markers,
-    labels,
+    // labels,
   }
 
   const eventTaps = {
@@ -119,7 +119,7 @@ export const setupMapView = async (conf) => {
         selectionOutline,
         hoverOutline,
         hoverMarkers,
-        labels,
+        // labels,
       ],
       pixelRatio: Math.ceil(Math.max(window.devicePixelRatio, 1)),
       onClick: eventTaps.didClick,
@@ -187,7 +187,7 @@ export const setupMapView = async (conf) => {
     selectionOutline.set('points', selection.toJS())
     atlas.redraw()
     const resourcesSelection = fetchSelectionPoints(selection.toJS(), layerData)
-    const event = new CustomEvent("searchMap",{ 
+    const event = new CustomEvent("searchMap",{
       detail:  {
           type: "add",
           selection: resourcesSelection

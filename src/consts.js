@@ -161,3 +161,26 @@ export const MapLayerSources = [
     default: true,
   },
 ]
+
+export const WebSocketURI = 'wss://welearn.cri-paris.org/carte/ws'
+
+
+export const ContourColors = [
+  '#b9e3ff',
+  '#acd0a5',
+  '#94bf8b',
+  '#a8c68f',
+  '#bdcc96',
+  '#d1d7ab',
+  '#efebc0',
+  '#ded6a3',
+  '#d3ca9d',
+  '#cab982',
+  '#e0e0e0',
+]
+
+export const EXTENTS_EN = {
+  // [min, max]
+  x: [-8.023, 12.664],
+  y: [-7.113, 8.436],
+}
