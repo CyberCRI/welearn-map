@@ -5,8 +5,6 @@ import _throttle from 'lodash/throttle'
 import _debounce from 'lodash/debounce'
 import _flatMap from 'lodash/flatMap'
 
-import { DotAtlas } from '@carrotsearch/dotatlas'
-
 import setupDebugger from './renderer-debugger'
 import { nodePicker, selectedConcepts, userResources, didPickLayer, $layerSource } from './store'
 import { fetchBaseLayer, request, fetchSelectionPoints } from './layers'

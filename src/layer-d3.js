@@ -88,6 +88,9 @@ class ConceptMap {
   constructor (props) {
     this.viz = this.setupVisualisation({ mountAt: props.mountPoint })
     this.filters = { ...props.filters }
+    this.onClickHandler = (e) => {
+      props.onSearchMap(e)
+    }
   }
 
   setupVisualisation = ({ mountAt }) => {
@@ -149,7 +152,16 @@ class ConceptMap {
       .on('markers.sample',   this.renderMarkers)
       .on('markers.portals',  this.renderPortals)
       .on('markers.portal_children', this.renderMarkers)
-      .on('query.labels_fov', this.renderMarkers)
+      .on('query.labels_fov', (i, q) => {
+        const nearbyConcepts = i.map(d => d.wikidata_id)
+        if (q.initiator === 'click') {
+          this.onClickHandler({ nearbyConcepts })
+        }
+        this.renderMarkers(i)
+      })
+      .on('query.nearby', (i) => {
+        console.log('[Resources Nearby]', i)
+      })
   }
 
   setupDOMEventHandlers = () => {
@@ -165,7 +177,13 @@ class ConceptMap {
     this.portals = d3.select('.layer.portals')
     this.markers = d3.select('.layer.markers')
 
-    this.viz.call(this.zoom)
+    this.viz
+      .on('click', (d) => {
+        const fov = this.didClickFieldOfView(d.x, d.y)
+        console.log(fov)
+        this.sock.emit('query.labels_fov', { ...this.filters, ...fov, initiator: 'click' })
+      })
+      .call(this.zoom)
   }
 
   init = () => {
@@ -209,6 +227,15 @@ class ConceptMap {
       y: scale.y.invert(height / 2),
       r,
     }
+  }
+
+  didClickFieldOfView = (cx, cy) => {
+    const scale = this.scale
+    const t = this.transform
+    const x = scale.x.invert(cx)
+    const y = scale.y.invert(cy)
+    const r = this.transform.k / 10
+    return { x, y, r }
   }
 
   get vizBBox () {
