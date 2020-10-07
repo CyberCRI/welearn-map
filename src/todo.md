@@ -4,6 +4,9 @@
 - The current version needs a static filters variable set to CRI-Project user
 - An event handler for `onSelect`.
 
+- Add babel transpilation step so to use a pre-transpiled es6 module of vue components.
+
+
 ## Requirements (in consideration)
 
 - Abstract rendering pipeline
