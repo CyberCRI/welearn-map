@@ -86,8 +86,8 @@ function occlusion(svg, selector) {
 
 class ConceptMap {
   constructor (props) {
-    this.viz = this.setupVisualisation({ mountAt: '#d3-root' })
-    this.filters = {}
+    this.viz = this.setupVisualisation({ mountAt: props.mountPoint })
+    this.filters = { ...props.filters }
   }
 
   setupVisualisation = ({ mountAt }) => {
@@ -127,6 +127,7 @@ class ConceptMap {
     viewportEvent.export.watch(this.serializeCanvas)
 
     didPickLayer.watch((value) => {
+      // [!todo] used in welearn, this needs to get out of here.
       if (value.user) {
         this.filters = { user: value.src }
       } else {
@@ -134,9 +135,9 @@ class ConceptMap {
       }
 
       this.sock
-        .emit('contours.density', this.filters)
         .emit('markers.init', this.filters)
         .emit('markers.portals', this.filters)
+        .emit('contours.density', this.filters)
     })
   }
 

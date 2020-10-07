@@ -5,6 +5,8 @@ import _throttle from 'lodash/throttle'
 import _debounce from 'lodash/debounce'
 import _flatMap from 'lodash/flatMap'
 
+import { DotAtlas } from '@carrotsearch/dotatlas'
+
 import setupDebugger from './renderer-debugger'
 import { nodePicker, selectedConcepts, userResources, didPickLayer, $layerSource } from './store'
 import { fetchBaseLayer, request, fetchSelectionPoints } from './layers'
@@ -129,38 +131,43 @@ export const setupMapView = async (conf) => {
     })
 
 
-  const mapt = {
+  class mapt {
+    constructor () {
+    }
+
     get centerPoint () {
       const { height, width } = conf.element.getBoundingClientRect()
       const [ ptx, pty, _ ] = atlas.screenToPointSpace(width / 2, height / 2)
       return { x: ptx, y: pty, zoom: this.zoom }
-    },
+    }
+
     set centerPoint ({ x, y, zoom }) {
       atlas.centerPoint(x, y, zoom)
-    },
+    }
 
     get zoom () {
       return atlas.get('zoom')
-    },
+    }
     set zoom (value) {
       // If we let zoom value go below zero, weird things happen. Weird but cool.
       this.centerPoint = { ...this.centerPoint, zoom: Math.max(value, 0.05) }
-    },
+    }
 
     get x () {
       return this.centerPoint.x
-    },
+    }
     set x (value) {
       this.centerPoint = { ...this.centerPoint, x: value }
-    },
+    }
 
     get y () {
       return this.centerPoint.y
-    },
+    }
     set y (value) {
       this.centerPoint = { ...this.centerPoint, y: value }
-    },
+    }
   }
+  atlas.mapt = new mapt()
 
   const debugUi = setupDebugger(atlas, layers, conf.element)
   const keyboardTrigger = new Mousetrap()
@@ -198,6 +205,8 @@ export const setupMapView = async (conf) => {
 
   window.addEventListener('resize', eventTaps.didResizeViewport)
   window.addEventListener("resetSearch", nodePicker.reset());
+
+  window.atlas = atlas
 
   return atlas
 }

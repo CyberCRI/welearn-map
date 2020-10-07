@@ -3,16 +3,21 @@
   "version": "0.1.5",
   "author": "Welearn Team",
   "dependencies": {
-    "d3": "^5.15.1",
+    "@carrotsearch/dotatlas": "^0.3.0",
+    "d3": "^6.2.0",
     "dat.gui": "^0.7.7",
-    "effector": "^20.13.4",
-    "effector-react": "^20.6.3",
+    "effector": "^21.4.1",
+    "effector-react": "^21.0.6",
     "file-saver": "^2.0.2",
-    "framer-motion": "^1.10.3",
+    "framer-motion": "^2.7.7",
     "immutable": "^4.0.0-rc.12",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.20",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-use": "^13.27.1"
+    "react-use": "^15.3.4"
+  },
+  "devDependencies": {
+    "sass": "^1.26.12",
+    "sass-loader": "^10.0.2"
   }
 }
