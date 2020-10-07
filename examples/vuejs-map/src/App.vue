@@ -1,16 +1,20 @@
 <template>
   <div id="app">
+    <p>WeLearn Concept Map Demo</p>
+    <concept-map/>
     <we-learn/>
   </div>
 </template>
 
 <script>
+import ConceptMap from './components/ConceptMap.vue'
 import WeLearn from './components/WeLearn.vue'
 
 export default {
   name: 'App',
   components: {
-    WeLearn
+    ConceptMap,
+    WeLearn,
   }
 }
 </script>

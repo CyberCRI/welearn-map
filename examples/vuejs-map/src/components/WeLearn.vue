@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Test Welearn Map</h1>
+        <p>DotAtlas Map</p>
         <div id="atlas"></div>
     </div>
 </template>
@@ -31,7 +31,7 @@ export default {
         background-color: white;
     }
     #atlas {
-        width: 50%;
+        width: 100%;
         height: 50vh;
     }
 

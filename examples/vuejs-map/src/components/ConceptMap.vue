@@ -5,32 +5,40 @@
 </template>
 
 <script>
-import { ConceptMap } from 'welearn-map'
+import { ConceptMap } from '../../../../src/layer-d3'
 
 export default {
     name: 'ConceptMap',
     methods: {
         displayData: function(e) {
-            e.detail.selection.forEach(element => {
-                console.log(element)
-            });
+            console.log(e.nearbyConcepts)
         }
     },
     mounted() {
         window.addEventListener('searchMap', this.displayData);
-        const cmap = new ConceptMap()
+        const cmap = new ConceptMap({
+          filters: { user: 'projects@import.bot' },
+          mountPoint: '#d3-root',
+          onSearchMap: this.displayData, // [!todo @nicolas]
+        })
         cmap.init()
-    }
+    },
+
 }
 </script>
 
 <style lang='scss'>
-    $white: #ffffff;
+    // Use these variables in next iteration.
+    :root {
+      --cornerRadius: 6px;
+    }
+
+    $white: #fff;
     $portal-fill-0: #000;
-    $portal-fill-1: #ccc;
-    $portal-fill-2: #ccc;
-    $portal-fill-3: #ccc;
-    $marker-fill: #fc0;
+    $portal-fill-1: #444;
+    $portal-fill-2: #444;
+    $portal-fill-3: #444;
+    $marker-fill: #042;
 
     @mixin fill-container($offset: 0px) {
       // Absolutely fill the element inside the parent element.
@@ -43,7 +51,7 @@ export default {
     }
 
     .mapcard {
-      border-radius: 5px;
+      border-radius: var(--cornerRadius);
       overflow: hidden;
     }
 
@@ -55,15 +63,13 @@ export default {
       width: 100%;
       height: 50vh;
       text-align: left;
+      font-size: small;
 
       z-index: 2;
       width: 100%;
       min-height: 400px;
       height: 55vh;
       background: #a8cff4;
-
-      font: {
-        family: 'Barlow', ;
 
       cursor: grab;
 
@@ -149,7 +155,7 @@ export default {
           font-size: 1em;
           font-weight: 500;
 
-          fill: $marker-fill;
+          color: $marker-fill;
           max-width: 140px;
           text-shadow: 0 0 5px $white;
         }
@@ -157,23 +163,23 @@ export default {
         .portal {
           font-size: 1em;
           font-weight: 500;
-          fill: $portal-fill-0;
+          color: $portal-fill-0;
           max-width: 200px;
           text-shadow: 0 0 5px $white, 1px 1px 2px $white;
           letter-spacing: .2px;
 
           &[level='1'] {
-            fill: $portal-fill-1;
+            color: $portal-fill-1;
             font-size: 1.4em;
             font-weight: 600;
           }
           &[level='2'] {
-            fill: $portal-fill-2;
+            color: $portal-fill-2;
             font-size: 1.2em;
             font-weight: 500;
           }
           &[level='3'] {
-            fill: $portal-fill-3;
+            color: $portal-fill-3;
             font-size: 1em;
             font-weight: 400;
           }

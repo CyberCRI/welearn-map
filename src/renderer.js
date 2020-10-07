@@ -80,7 +80,7 @@ export const setupMapView = async (conf) => {
     hoverMarkers,
     hoverOutline,
     markers,
-    // labels,
+    labels,
   }
 
   const eventTaps = {
@@ -119,7 +119,7 @@ export const setupMapView = async (conf) => {
         selectionOutline,
         hoverOutline,
         hoverMarkers,
-        // labels,
+        labels,
       ],
       pixelRatio: Math.ceil(Math.max(window.devicePixelRatio, 1)),
       onClick: eventTaps.didClick,
