@@ -1,6 +1,6 @@
 {
   "name": "welearn-map",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "author": "Welearn Team",
   "dependencies": {
     "@carrotsearch/dotatlas": "^0.3.0",
@@ -19,5 +19,8 @@
   "devDependencies": {
     "sass": "^1.26.12",
     "sass-loader": "^10.0.2"
+  },
+  "scripts": {
+    "watch": "npm run --prefix examples/vuejs-map serve"
   }
 }
