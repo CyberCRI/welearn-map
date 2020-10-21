@@ -97,95 +97,87 @@ export default {
       }
 
       .divroot {
-        position: absolute;
         @include fill-container(0);
+        position: absolute;
         pointer-events: none;
         overflow: hidden;
 
         div.layer {
           // fill the root container with the layers in here.
+          @include fill-container(0);
           overflow: hidden;
           position: absolute;
           pointer-events: none;
-          @include fill-container(0);
-        }
 
-        p.marker, p.portal {
-          position: absolute;
-          display: inline;
-          padding: 5px;
-          margin: 0;
+          p.marker {
+            position: absolute;
+            display: inline;
+            padding: 5px;
+            margin: 0;
 
-          line-height: 1;
-          text-align: center;
-          text-rendering: optimizeSpeed;
-          border-radius: 4px;
+            line-height: 1;
+            text-align: center;
+            text-rendering: optimizeSpeed;
+            border-radius: 4px;
 
-          transition: .1s opacity, .1s font-size;
+            transition: .1s opacity, .1s font-size;
 
-          // default state to make sure we do not crowd the map on first
-          // render.
-          visibility: hidden;
-          opacity: 0;
-
-          &.visible {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: visible;
-          }
-          &.occluded {
-            opacity: 0;
+            // default state to make sure we do not crowd the map on first
+            // render.
             visibility: hidden;
-            pointer-events: none;
-          }
-          &.interactive {
-            cursor: pointer;
-            &:hover {
-              background: transparentize($white, .7);
+            opacity: 0;
+
+            &.visible {
+              opacity: 1;
+              visibility: visible;
+              pointer-events: visible;
             }
-            &:focus {
-              background: transparentize($white, .9);
+            &.occluded {
+              opacity: 0;
+              visibility: hidden;
+              pointer-events: none;
             }
-          }
-          &.highlighted {
-            background: transparentize($white, .5);
-          }
-        }
-        .marker {
-          font-size: 1em;
-          font-weight: 500;
+            &.interactive {
+              cursor: pointer;
+              &:hover {
+                background: transparentize($white, .7);
+              }
+              &:focus {
+                background: transparentize($white, .9);
+              }
+            }
+            &.highlighted {
+              background: transparentize($white, .5);
+            }
 
-          color: $marker-fill;
-          max-width: 140px;
-          text-shadow: 0 0 5px $white;
-        }
+            &.portal {
+              font-size: 2em;
+              background: transparentize($color: $white, $amount: .7);
+              font-weight: 500;
+              color: $portal-fill-0;
+              max-width: 200px;
+              text-shadow: 0 0 5px $white, 1px 1px 2px $white;
+              letter-spacing: .2px;
 
-        .portal {
-          font-size: 1em;
-          font-weight: 500;
-          color: $portal-fill-0;
-          max-width: 200px;
-          text-shadow: 0 0 5px $white, 1px 1px 2px $white;
-          letter-spacing: .2px;
-
-          &[level='1'] {
-            color: $portal-fill-1;
-            font-size: 1.4em;
-            font-weight: 600;
-          }
-          &[level='2'] {
-            color: $portal-fill-2;
-            font-size: 1.2em;
-            font-weight: 500;
-          }
-          &[level='3'] {
-            color: $portal-fill-3;
-            font-size: 1em;
-            font-weight: 400;
+              &[level='1'] {
+                color: $portal-fill-1;
+                font-size: 1.4em;
+                font-weight: 600;
+              }
+              &[level='2'] {
+                color: $portal-fill-2;
+                font-size: 1.2em;
+                font-weight: 500;
+              }
+              &[level='3'] {
+                color: $portal-fill-3;
+                font-size: 1em;
+                font-weight: 400;
+              }
+            }
           }
         }
       }
-
       .contours {
         pointer-events: none;
 
