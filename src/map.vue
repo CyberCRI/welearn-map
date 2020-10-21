@@ -114,58 +114,16 @@ export default {
           pointer-events: none;
           @include fill-container(0);
         }
-
-        p.marker, p.portal {
-          position: absolute;
-          display: inline;
-          padding: 5px;
-          margin: 0;
-
-          line-height: 1;
-          text-align: center;
-          text-rendering: optimizeSpeed;
-          border-radius: 4px;
-
-          transition: .1s opacity, .1s font-size;
-
-          // default state to make sure we do not crowd the map on first
-          // render.
-          visibility: hidden;
-          opacity: 0;
-
-          &.visible {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: visible;
-          }
-          &.occluded {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-          }
-          &.interactive {
-            cursor: pointer;
-            &:hover {
-              background: transparentize($white, .7);
-            }
-            &:focus {
-              background: transparentize($white, .9);
-            }
-          }
-          &.highlighted {
-            background: transparentize($white, .5);
-          }
-        }
-        .marker {
+        /* .marker {
           font-size: 1em;
           font-weight: 500;
 
           color: $marker-fill;
           max-width: 140px;
           text-shadow: 0 0 5px $white;
-        }
+        } */
 
-        .portal {
+        /* .portal {
           font-size: 1em;
           font-weight: 500;
           color: $portal-fill-0;
@@ -188,9 +146,55 @@ export default {
             font-size: 1em;
             font-weight: 400;
           }
-        }
+        } */
       }
 
+      p.marker {
+        position: absolute;
+        display: inline;
+        padding: 5px;
+        margin: 0;
+
+        line-height: 1;
+        text-align: center;
+        text-rendering: optimizeSpeed;
+        border-radius: 4px;
+
+        transition: .1s opacity, .1s font-size;
+
+        // default state to make sure we do not crowd the map on first
+        // render.
+        visibility: hidden;
+        opacity: 0;
+
+        &.visible {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: visible;
+        }
+        &.occluded {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+        }
+        &.interactive {
+          cursor: pointer;
+          &:hover {
+            background: transparentize($white, .7);
+          }
+          &:focus {
+            background: transparentize($white, .9);
+          }
+        }
+        &.highlighted {
+          background: transparentize($white, .5);
+        }
+
+        &.portal {
+          font-size: 2em;
+          background: red;
+        }
+      }
       .contours {
         pointer-events: none;
 

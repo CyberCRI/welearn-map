@@ -2,6 +2,7 @@ import * as d3 from 'd3'
 import _ from 'lodash'
 
 import { viewportEvent, didPickLayer, NodeEvents } from './state_store'
+import { createStore, createApi } from 'effector'
 
 import { CarteSocket } from './carte-ws'
 import { ContourColors, EXTENTS_EN } from './consts'
@@ -84,10 +85,28 @@ function occlusion(svg, selector) {
 }
 
 
+const $portalStore = createStore([])
+const $markerStore = createStore([])
+
+const $markers = createApi($markerStore, {
+  appendConcepts: (state, items) => {
+    const nodes = items.map(n => ({ kind: 'concept', wikidata_id: n.index, ...n }))
+    return _.unionBy(state, nodes, 'wikidata_id')
+  },
+  appendPortals: (state, items) => {
+    const nodes = items.map(n => ({ kind: 'portal', ...n }))
+    return _.unionBy(state, nodes, 'wikidata_id')
+  },
+  clear: (state) => [],
+})
+
+
+
 class ConceptMap {
   constructor (props) {
     this.viz = this.setupVisualisation({ mountAt: props.mountPoint })
     this.filters = { ...props.filters }
+
     this.onClickHandler = (e) => {
       props.onSearchMap(e)
     }
@@ -148,16 +167,17 @@ class ConceptMap {
     this.sock = new CarteSocket()
     this.sock
       .on('contours.density', this.renderContours)
-      .on('markers.init',     this.renderMarkers)
-      .on('markers.sample',   this.renderMarkers)
-      .on('markers.portals',  this.renderPortals)
-      .on('markers.portal_children', this.renderMarkers)
+      .on('markers.init',     $markers.appendConcepts)
+      .on('markers.portals',  $markers.appendPortals)
+      // .on('markers.sample',   (d) => $markers.append(d))
       .on('query.labels_fov', (i, q) => {
         const nearbyConcepts = i.map(d => d.wikidata_id)
         if (q.initiator === 'click') {
           this.onClickHandler({ nearbyConcepts })
         }
-        this.renderMarkers(i)
+        $markers.appendConcepts(i)
+        // $markers.append(i)
+        // this.renderMarkers({ data: i, kind: 'concept'})
       })
       .on('query.nearby', (i) => {
         console.log('[Resources Nearby]', i)
@@ -174,8 +194,12 @@ class ConceptMap {
     this.contours = this.svg.select('.contours')
 
     this.viz_div = d3.select('div.divroot')
-    this.portals = d3.select('.layer.portals')
+    // this.portals = d3.select('.layer.portals')
     this.markers = d3.select('.layer.markers')
+    $markerStore.watch((items) => {
+      console.log('rendering n_items', items.length)
+      this.renderMarkers(items)
+    })
 
     this.viz
       .on('click', (d) => {
@@ -194,8 +218,8 @@ class ConceptMap {
     _.defer(() => {
       this.sock
         .emit('contours.density', this.filters)
-        .emit('markers.init', this.filters)
         .emit('markers.portals', this.filters)
+        .emit('markers.init', this.filters)
     })
   }
 
@@ -307,10 +331,12 @@ class ConceptMap {
       .data(data)
       .join('p')
         .attr('class', 'marker interactive')
+        .classed('portal', d => d.kind === 'portal')
+        .classed('concept', d => d.kind === 'concept')
         .attr('data-priority', i => {
-          return i.n_items
+          return i.kind === 'portal' ? i.n_child : i.n_items
         })
-        .attr('id', i => `nc-${i.wikidata_id}`)
+        .attr('level', i => i.kind === 'portal' ? i.level : 0)
         .text(i => i.title)
         .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
         .on('click', data => viewportEvent.click({ source: 'marker', data }))
@@ -348,16 +374,15 @@ class ConceptMap {
       .selectAll('.marker')
         .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
 
-    this.portals
-      .selectAll('.portal')
-        .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
+    // this.portals
+    //   .selectAll('.portal')
+    //     .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
   }
 
   updateLabelVisibility = _.throttle(() => {
     // We're fixing the visibility of labels. However we need to ensure the rules
     // are respected for each layer.
     occlusion(this.viz_div, '.marker')
-    occlusion(this.viz_div, '.portal')
   }, 400, { trailing: true, leading: true })
 
   didZoom = (d, i, e) => {
@@ -365,7 +390,7 @@ class ConceptMap {
     this.updateTransformation(t, this.scale)
 
     this.updateLabelVisibility()
-    this.didCrossZoomTrigger(t)
+    // this.didCrossZoomTrigger(t)
   }
 
   didCrossZoomTrigger = _.throttle((t) => {
