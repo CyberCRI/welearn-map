@@ -1,8 +1,7 @@
 <template>
   <div id="app">
-    <p>WeLearn Concept Map Demo</p>
     <concept-map/>
-    <we-learn/>
+    <we-learn class='dotatlas-root'/>
   </div>
 </template>
 
@@ -28,4 +27,12 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
+#app > .mapcard {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  pointer-events: none;
+}
+
 </style>

@@ -1,6 +1,5 @@
 <template>
     <div>
-        <p>DotAtlas Map</p>
         <div id="atlas"></div>
     </div>
 </template>

@@ -69,7 +69,7 @@ export default {
       width: 100%;
       min-height: 400px;
       height: 55vh;
-      background: #a8cff4;
+      background: transparent;
 
       cursor: grab;
 
@@ -80,7 +80,7 @@ export default {
         pointer-events: none;
 
         background: {
-          image: url('/media/textures/whitenoise-100x100.png');
+          image: url('/assets/whitenoise-100x100.png');
           size: 80px;
           color: transparent;
         }
