@@ -1,7 +1,8 @@
 <template>
   <div id="app">
+    <p>WeLearn Concept Map Demo</p>
     <concept-map/>
-    <we-learn class='dotatlas-root'/>
+    <we-learn/>
   </div>
 </template>
 
@@ -18,7 +19,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang='scss'>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -26,13 +27,18 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+
+  position: relative;
 }
 
-#app > .mapcard {
-  position: absolute;
-  z-index: 10;
-  width: 100%;
-  pointer-events: none;
-}
+// #app > .mapcard {
+//   position: absolute;
+//   z-index: 10;
+//   width: 100%;
+
+//   .d3-root {
+
+//   }
+// }
 
 </style>

@@ -16,12 +16,12 @@ export default {
     },
     mounted() {
         window.addEventListener('searchMap', this.displayData);
-        const cmap = new ConceptMap({
+        window.cmap = new ConceptMap({
           filters: { user: 'projects@import.bot' },
           mountPoint: '#d3-root',
           onSearchMap: this.displayData, // [!todo @nicolas]
         })
-        cmap.init()
+        window.cmap.init()
     },
 
 }
@@ -39,6 +39,7 @@ export default {
     $portal-fill-2: #444;
     $portal-fill-3: #444;
     $marker-fill: #042;
+    $background-map: #a8c9e6;
 
     @mixin fill-container($offset: 0px) {
       // Absolutely fill the element inside the parent element.
@@ -60,16 +61,14 @@ export default {
       overflow: hidden;
       position: relative;
       display: block;
-      width: 100%;
-      height: 50vh;
       text-align: left;
       font-size: small;
 
       z-index: 2;
       width: 100%;
       min-height: 400px;
-      height: 55vh;
-      background: transparent;
+      height: 50vh;
+      background: $background-map;
 
       cursor: grab;
 

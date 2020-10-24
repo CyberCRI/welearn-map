@@ -20,7 +20,7 @@ export default {
     mounted() {
         window.addEventListener('searchMap', this.displayData);
         const atlasEl = document.getElementById('atlas');
-        setupMapView({element: atlasEl});
+        window.atlas = setupMapView({element: atlasEl});
     }
 }
 </script>
