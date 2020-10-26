@@ -1,7 +1,7 @@
 import * as d3 from 'd3'
 import _ from 'lodash'
 
-import { viewportEvent, didPickLayer, NodeEvents } from './state_store'
+import { viewportEvent, didPickLayer, NodeEvents } from './store'
 import { createStore, createApi } from 'effector'
 
 import { CarteSocket } from './carte-ws'
@@ -315,7 +315,7 @@ class ConceptMap {
         .attr('d', d3.geoPath())
         .attr('fill', d => contourScale(d.value))
 
-    // this.translateToCenter(350, 500, 1)
+    this.translateToCenter(350, 500, 1)
   }
 
   renderMarkers = (data) => {
@@ -388,7 +388,6 @@ class ConceptMap {
   didZoom = (d, i, e) => {
     const t = this.transform
     this.updateTransformation(t, this.scale)
-
     this.updateLabelVisibility()
     // this.didCrossZoomTrigger(t)
   }
