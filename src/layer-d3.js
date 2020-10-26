@@ -127,9 +127,6 @@ class ConceptMap {
         .attr('class', 'divroot')
         .call(div => div
           .append('div')
-          .attr('class', 'layer portals'))
-        .call(div => div
-          .append('div')
           .attr('class', 'layer markers')))
   }
 
@@ -169,15 +166,12 @@ class ConceptMap {
       .on('contours.density', this.renderContours)
       .on('markers.init',     $markers.appendConcepts)
       .on('markers.portals',  $markers.appendPortals)
-      // .on('markers.sample',   (d) => $markers.append(d))
       .on('query.labels_fov', (i, q) => {
         const nearbyConcepts = i.map(d => d.wikidata_id)
         if (q.initiator === 'click') {
           this.onClickHandler({ nearbyConcepts })
         }
         $markers.appendConcepts(i)
-        // $markers.append(i)
-        // this.renderMarkers({ data: i, kind: 'concept'})
       })
       .on('query.nearby', (i) => {
         console.log('[Resources Nearby]', i)
@@ -204,7 +198,6 @@ class ConceptMap {
     this.viz
       .on('click', (d) => {
         const fov = this.didClickFieldOfView(d.x, d.y)
-        console.log(fov)
         this.sock.emit('query.labels_fov', { ...this.filters, ...fov, initiator: 'click' })
       })
       .call(this.zoom)
@@ -255,7 +248,6 @@ class ConceptMap {
 
   didClickFieldOfView = (cx, cy) => {
     const scale = this.scale
-    const t = this.transform
     const x = scale.x.invert(cx)
     const y = scale.y.invert(cy)
     const r = this.transform.k / 10
@@ -343,27 +335,6 @@ class ConceptMap {
     occlusion(this.viz_div, '.marker')
   }
 
-  renderPortals = (data) => {
-    const scale = this.scale
-    const quantiles = d3.scaleSymlog()
-      .domain(d3.extent(data.map(i => i.n_child)))
-      .range([0.8, 1])
-    const interpolateColor = i =>  d3.interpolateGreys(quantiles(i.n_child))
-
-    this.portals
-      .selectAll('.portal')
-      .data(data)
-      .join('p')
-        .attr('class', 'portal interactive')
-        .attr('level', i => i.level)
-        .attr('id', i => `np-${i.wikidata_id}`)
-        .attr('data-priority', i => (10 / i.level) * i.n_child)
-        .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
-        .text(i => i.title)
-        .on('click', data => viewportEvent.click({ source: 'portal', data }))
-    occlusion(this.viz_div, '.portal')
-  }
-
   updateTransformation = (transform, scale) => {
     // in-view nodes will have the transform/scale less than zero; greater than 1.
 
@@ -373,17 +344,13 @@ class ConceptMap {
     this.markers
       .selectAll('.marker')
         .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
-
-    // this.portals
-    //   .selectAll('.portal')
-    //     .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
   }
 
   updateLabelVisibility = _.throttle(() => {
     // We're fixing the visibility of labels. However we need to ensure the rules
     // are respected for each layer.
     occlusion(this.viz_div, '.marker')
-  }, 400, { trailing: true, leading: true })
+  }, 200, { trailing: true, leading: true })
 
   didZoom = (d, i, e) => {
     const t = this.transform
@@ -413,11 +380,6 @@ class ConceptMap {
       .style('opacity', _ => t.k < TRIGGER_BREAKPOINT ? 0 : 1)
       .style('display', _ => t.k < TRIGGER_BREAKPOINT ? 'none' : 'block')
 
-    portalContainer
-      .transition(labelTransition)
-      .style('opacity', t.k < TRIGGER_BREAKPOINT ? 1 : 0.4)
-      .style('font-size', t.k >= TRIGGER_BREAKPOINT ? '1.3em' : '1em')
-
     this.maybeLoadNewLabels(t)
 
     const _tj = performance.now()
@@ -436,19 +398,6 @@ class ConceptMap {
       this.sock.emit('query.labels_fov', payload)
     }
   }, 1000)
-
-  prominentPortals = () => {
-    // Returns currently visible portal nodes. Refactor to extract visibility sensor.
-    const vizBox = this.viz.node().getBoundingClientRect()
-    const visiblePortals = []
-    this.portals.selectAll('.portal').each((d, i, e) => {
-      const nodeBox = e[i].getBoundingClientRect()
-      if (isBoxVisible(nodeBox, vizBox)) {
-        visiblePortals.push(d)
-      }
-    })
-    return visiblePortals
-  }
 
   serializeCanvas = () => {
     const saveAs = require('file-saver')
