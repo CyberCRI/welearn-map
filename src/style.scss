@@ -42,9 +42,10 @@ $marker-fill: #042;
     content: '';
     opacity: .09;
     pointer-events: none;
+    @include fill-container(0);
 
     background: {
-      image: url('/assets/whitenoise-100x100.png');
+      image: url('../assets/whitenoise-100x100.png');
       size: 80px;
       color: transparent;
     }
