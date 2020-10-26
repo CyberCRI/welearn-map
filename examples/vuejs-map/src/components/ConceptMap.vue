@@ -34,12 +34,12 @@ export default {
     }
 
     $white: #fff;
-    $portal-fill-0: #000;
-    $portal-fill-1: #444;
-    $portal-fill-2: #444;
-    $portal-fill-3: #444;
+    $portal-fill-0: #3F51B5;
+    $portal-fill-1: #37474F;
+    $portal-fill-2: #37474F;
+    $portal-fill-3: #37474F;
     $marker-fill: #042;
-    $background-map: #a8c9e6;
+    $background-map: #9cd0f9;
 
     @mixin fill-container($offset: 0px) {
       // Absolutely fill the element inside the parent element.
@@ -113,11 +113,13 @@ export default {
             display: inline;
             padding: 5px;
             margin: 0;
+            max-width: 160px;
 
             line-height: 1;
             text-align: center;
             text-rendering: optimizeSpeed;
             border-radius: 4px;
+            border: 1px solid transparent;
 
             transition: .1s opacity, .1s font-size;
 
@@ -140,9 +142,11 @@ export default {
               cursor: pointer;
               &:hover {
                 background: transparentize($white, .7);
+                border-color: $white;
               }
               &:focus {
                 background: transparentize($white, .9);
+                border-color: $white;
               }
             }
             &.highlighted {
@@ -151,10 +155,9 @@ export default {
 
             &.portal {
               font-size: 2em;
-              background: transparentize($color: $white, $amount: .7);
+              background: transparentize($color: $white, $amount: .8);
               font-weight: 500;
               color: $portal-fill-0;
-              max-width: 200px;
               text-shadow: 0 0 5px $white, 1px 1px 2px $white;
               letter-spacing: .2px;
 

@@ -2,19 +2,16 @@
   <div id="app">
     <p>WeLearn Concept Map Demo</p>
     <concept-map/>
-    <we-learn/>
   </div>
 </template>
 
 <script>
 import ConceptMap from './components/ConceptMap.vue'
-import WeLearn from './components/WeLearn.vue'
 
 export default {
   name: 'App',
   components: {
     ConceptMap,
-    WeLearn,
   }
 }
 </script>
@@ -29,6 +26,10 @@ export default {
   margin-top: 60px;
 
   position: relative;
+}
+
+body > .dg.ac {
+  z-index: 42;
 }
 
 // #app > .mapcard {
