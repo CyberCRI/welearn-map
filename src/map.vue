@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ConceptMap from '.'
+import { ConceptMap, ConceptStore } from '.'
 
 export default {
     name: 'ConceptMap',
@@ -21,6 +21,8 @@ export default {
           onSearchMap: this.displayData, // [!todo @nicolas]
         })
         window.cmap.init()
+
+        ConceptStore.viewportEvent.click.watch(console.log)
     },
 
 }
