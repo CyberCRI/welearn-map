@@ -331,7 +331,7 @@ class ConceptMap {
         .attr('level', i => i.kind === 'portal' ? i.level : 0)
         .text(i => i.title)
         .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
-        .on('click', data => viewportEvent.click({ source: 'marker', data }))
+        .on('click', (d, i, e) => viewportEvent.click({ source: 'marker', data: i }))
     occlusion(this.viz_div, '.marker')
   }
 
