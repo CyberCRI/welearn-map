@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import ConceptMap from './components/ConceptMap.vue'
+import ConceptMap from '../../../src/Map.vue'
 
 export default {
   name: 'App',
