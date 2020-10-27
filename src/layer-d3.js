@@ -1,7 +1,7 @@
 import * as d3 from 'd3'
 import _ from 'lodash'
 
-import { viewportEvent, didPickLayer, NodeEvents } from './store'
+import { viewportEvent, didPickLayer, NodeEvents, $markers, $markerStore } from './store'
 import { createStore, createApi } from 'effector'
 
 import { CarteSocket } from './carte-ws'
@@ -85,27 +85,18 @@ function occlusion(svg, selector) {
 }
 
 
-const $portalStore = createStore([])
-const $markerStore = createStore([])
-
-const $markers = createApi($markerStore, {
-  appendConcepts: (state, items) => {
-    const nodes = items.map(n => ({ kind: 'concept', wikidata_id: n.index, ...n }))
-    return _.unionBy(state, nodes, 'wikidata_id')
-  },
-  appendPortals: (state, items) => {
-    const nodes = items.map(n => ({ kind: 'portal', ...n }))
-    return _.unionBy(state, nodes, 'wikidata_id')
-  },
-  clear: (state) => [],
-})
-
-
-
 class ConceptMap {
   constructor (props) {
     this.viz = this.setupVisualisation({ mountAt: props.mountPoint })
     this.filters = { ...props.filters }
+
+    this.effects = {
+      viewportEvent,
+      didPickLayer,
+    }
+    this.stores = {
+      $markers,
+    }
 
     this.onClickHandler = (e) => {
       props.onSearchMap(e)
@@ -188,7 +179,7 @@ class ConceptMap {
     this.contours = this.svg.select('.contours')
 
     this.viz_div = d3.select('div.divroot')
-    // this.portals = d3.select('.layer.portals')
+
     this.markers = d3.select('.layer.markers')
     $markerStore.watch((items) => {
       console.log('rendering n_items', items.length)
@@ -246,16 +237,16 @@ class ConceptMap {
     }
   }
 
+  get vizBBox () {
+    return this.viz.node().getBoundingClientRect()
+  }
+
   didClickFieldOfView = (cx, cy) => {
     const scale = this.scale
     const x = scale.x.invert(cx)
     const y = scale.y.invert(cy)
     const r = this.transform.k / 10
     return { x, y, r }
-  }
-
-  get vizBBox () {
-    return this.viz.node().getBoundingClientRect()
   }
 
   translateToCenter = (x, y, k) => {
@@ -350,7 +341,7 @@ class ConceptMap {
     // We're fixing the visibility of labels. However we need to ensure the rules
     // are respected for each layer.
     occlusion(this.viz_div, '.marker')
-  }, 200, { trailing: true, leading: true })
+  }, 600, { trailing: true, leading: true })
 
   didZoom = (d, i, e) => {
     const t = this.transform
