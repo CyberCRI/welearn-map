@@ -3,23 +3,18 @@
   "version": "0.2.0",
   "author": "Welearn Team",
   "dependencies": {
-    "@carrotsearch/dotatlas": "^0.3.0",
     "d3": "^6.2.0",
-    "dat.gui": "^0.7.7",
     "effector": "20.1.0",
     "file-saver": "^2.0.2",
-    "framer-motion": "^2.7.7",
-    "immutable": "^4.0.0-rc.12",
-    "lodash": "^4.17.20",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-use": "^15.3.4"
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
     "sass": "^1.26.12",
     "sass-loader": "^10.0.2"
   },
+  "main": "src/index.js",
   "scripts": {
-    "watch": "npm run --prefix examples/vuejs-map serve"
+    "watch": "npm run --prefix examples/vuejs-map serve",
+    "build": "npm run --prefix examples/vuejs-map build"
   }
 }
