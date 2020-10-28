@@ -36,5 +36,9 @@ export default {
 .mapcard {
   border-radius: var(--cornerRadius);
   overflow: hidden;
+
+  #d3-root {
+    height: 80vh;
+  }
 }
 </style>

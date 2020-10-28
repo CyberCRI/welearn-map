@@ -2,7 +2,6 @@ import * as d3 from 'd3'
 import _ from 'lodash'
 
 import { viewportEvent, didPickLayer, NodeEvents, $markers, $markerStore } from './store'
-import { createStore, createApi } from 'effector'
 
 import { CarteSocket } from './carte-ws'
 import { ContourColors, EXTENTS_EN } from './consts'
@@ -86,7 +85,7 @@ function occlusion(svg, selector) {
 
 
 class ConceptMap {
-  constructor (props) {
+  constructor(props) {
     this.viz = this.setupVisualisation({ mountAt: props.mountPoint })
     this.filters = { ...props.filters }
 
@@ -155,8 +154,8 @@ class ConceptMap {
     this.sock = new CarteSocket()
     this.sock
       .on('contours.density', this.renderContours)
-      .on('markers.init',     $markers.appendConcepts)
-      .on('markers.portals',  $markers.appendPortals)
+      .on('markers.init', $markers.appendConcepts)
+      .on('markers.portals', $markers.appendPortals)
       .on('query.labels_fov', (i, q) => {
         const nearbyConcepts = i.map(d => d.wikidata_id)
         if (q.initiator === 'click') {
@@ -207,7 +206,7 @@ class ConceptMap {
     })
   }
 
-  get scale () {
+  get scale() {
     /**
      * Get axes scales with current transformation applied and rounded.
      */
@@ -217,12 +216,12 @@ class ConceptMap {
     return { x, y, ax: AxesScale.x, ay: AxesScale.y }
   }
 
-  get transform () {
+  get transform() {
     //- Get Current zoomTransform
     return d3.zoomTransform(this.viz.node())
   }
 
-  get currentFieldOfView () {
+  get currentFieldOfView() {
     //- Returns a field of view object {x, y, r} where <x, y> are the
     //- coordinates of point P at dead-center. r is the radius of a circle
     //- drawn from the P to the bounding box vertex.
@@ -237,7 +236,7 @@ class ConceptMap {
     }
   }
 
-  get vizBBox () {
+  get vizBBox() {
     return this.viz.node().getBoundingClientRect()
   }
 
@@ -264,7 +263,7 @@ class ConceptMap {
 
   translateToNode = (node) => {
     const { ax, ay } = this.scale
-    this.translateToCenter(ax(node.x), ay(node.y), 2.5)
+    this.translateToCenter(ax(node.x), ay(node.y), Math.max(this.transform.k, 2.5))
   }
 
   renderContours = (data) => {
@@ -295,8 +294,8 @@ class ConceptMap {
       .selectAll('path')
       .data(contours)
       .join('path')
-        .attr('d', d3.geoPath())
-        .attr('fill', d => contourScale(d.value))
+      .attr('d', d3.geoPath())
+      .attr('fill', d => contourScale(d.value))
 
     this.translateToCenter(350, 500, 1)
   }
@@ -313,16 +312,16 @@ class ConceptMap {
       .selectAll('.marker')
       .data(data)
       .join('p')
-        .attr('class', 'marker interactive')
-        .classed('portal', d => d.kind === 'portal')
-        .classed('concept', d => d.kind === 'concept')
-        .attr('data-priority', i => {
-          return i.kind === 'portal' ? i.n_child : i.n_items
-        })
-        .attr('level', i => i.kind === 'portal' ? i.level : 0)
-        .text(i => i.title)
-        .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
-        .on('click', (d, i, e) => viewportEvent.click({ source: 'marker', data: i }))
+      .attr('class', 'marker interactive')
+      .classed('portal', d => d.kind === 'portal')
+      .classed('concept', d => d.kind === 'concept')
+      .attr('data-priority', i => {
+        return i.kind === 'portal' ? i.n_child : i.n_items
+      })
+      .attr('level', i => i.kind === 'portal' ? i.level : 0)
+      .text(i => i.title)
+      .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
+      .on('click', (d, i, e) => viewportEvent.click({ source: i.kind, data: i }))
     occlusion(this.viz_div, '.marker')
   }
 
@@ -332,16 +331,19 @@ class ConceptMap {
     this.svg.select('g.contours')
       .attr('transform', transform)
 
+    this.viz_div
+      .attr('data-zoomed', _ => transform.k >= 1.5 ? 'in' : 'out' )
+
     this.markers
       .selectAll('.marker')
-        .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
+      .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
   }
 
-  updateLabelVisibility = _.throttle(() => {
+  updateLabelVisibility = _.debounce(() => {
     // We're fixing the visibility of labels. However we need to ensure the rules
     // are respected for each layer.
     occlusion(this.viz_div, '.marker')
-  }, 600, { trailing: true, leading: true })
+  }, 100, { trailing: true, leading: true })
 
   didZoom = (d, i, e) => {
     const t = this.transform
@@ -396,7 +398,7 @@ class ConceptMap {
     svg.setAttribute('xlink', 'http://www.w3.org/1999/xlink')
 
     const svgString = (new XMLSerializer()).serializeToString(svg)
-    const blob = new Blob([ svgString ], { type: 'image/svg+xml' })
+    const blob = new Blob([svgString], { type: 'image/svg+xml' })
 
     saveAs(blob, 'welearn-map.svg')
   }
