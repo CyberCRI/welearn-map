@@ -1,18 +1,20 @@
 {
   "name": "welearn-map",
-  "version": "0.1.5",
+  "version": "0.3.0",
   "author": "Welearn Team",
   "dependencies": {
-    "d3": "^5.15.1",
-    "dat.gui": "^0.7.7",
-    "effector": "^20.13.4",
-    "effector-react": "^20.6.3",
+    "d3": "^6.2.0",
+    "effector": "20.1.0",
     "file-saver": "^2.0.2",
-    "framer-motion": "^1.10.3",
-    "immutable": "^4.0.0-rc.12",
-    "lodash": "^4.17.15",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-use": "^13.27.1"
+    "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "sass": "^1.26.12",
+    "sass-loader": "^10.0.2"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "watch": "npm run --prefix examples/vuejs-map serve",
+    "build": "npm run --prefix examples/vuejs-map build"
   }
 }

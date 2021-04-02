@@ -1,21 +1,22 @@
 <template>
   <div id="app">
-    <we-learn/>
+    <p>WeLearn Concept Map Demo</p>
+    <concept-map/>
   </div>
 </template>
 
 <script>
-import WeLearn from './components/WeLearn.vue'
+import ConceptMap from '../../../src/Map.vue'
 
 export default {
   name: 'App',
   components: {
-    WeLearn
+    ConceptMap,
   }
 }
 </script>
 
-<style>
+<style lang='scss'>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -23,5 +24,22 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+
+  position: relative;
 }
+
+body > .dg.ac {
+  z-index: 42;
+}
+
+// #app > .mapcard {
+//   position: absolute;
+//   z-index: 10;
+//   width: 100%;
+
+//   .d3-root {
+
+//   }
+// }
+
 </style>
