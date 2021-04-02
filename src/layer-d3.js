@@ -96,6 +96,7 @@ class ConceptMap {
     this.stores = {
       $markers,
     }
+    this.vizLayers = {}
 
     this.onClickHandler = (e) => {
       props.onSearchMap(e)
@@ -111,13 +112,19 @@ class ConceptMap {
         .attr('height', '100%')
         .call(s => s
           .append('g')
-          .attr('class', 'contours')))
+          .attr('class', 'contours'))
+        .call(s => s
+          .append('g')
+          .attr('class', 'scatter')))
       .call(s => s
         .append('div')
         .attr('class', 'divroot')
         .call(div => div
           .append('div')
-          .attr('class', 'layer markers')))
+          .attr('class', 'layer markers'))
+        .call(div => div
+          .append('div')
+          .attr('class', 'layer selection')))
   }
 
   registerListeners = () => {
@@ -157,7 +164,7 @@ class ConceptMap {
       .on('markers.init', $markers.appendConcepts)
       .on('markers.portals', $markers.appendPortals)
       .on('query.labels_fov', (i, q) => {
-        const nearbyConcepts = i.map(d => d.wikidata_id)
+        const nearbyConcepts = i.map(d => d.index)
         if (q.initiator === 'click') {
           this.onClickHandler({ nearbyConcepts })
         }
@@ -175,13 +182,15 @@ class ConceptMap {
       .on('zoom', this.didZoom)
 
     this.svg = d3.select('svg.maproot')
-    this.contours = this.svg.select('.contours')
+    this.vizLayers.contours = this.svg.select('.contours')
+    this.vizLayers.scatter = this.svg.select('.scatter')
+    this.vizLayers.divroot = d3.select('div.divroot')
+    this.vizLayers.markers = d3.select('.layer.markers')
+    this.vizLayers.selection = d3.select('.layer.selection')
 
-    this.viz_div = d3.select('div.divroot')
-
-    this.markers = d3.select('.layer.markers')
     $markerStore.watch((items) => {
       console.log('rendering n_items', items.length)
+      this.renderScatter(items)
       this.renderMarkers(items)
     })
 
@@ -281,6 +290,7 @@ class ConceptMap {
       .y(fy)
       .weight(i => Math.max(i.w, i.w2))
       .cellSize(Math.pow(2, 2))
+      .bandwidth(14)
       .thresholds(80))(items)
 
     console.log(`Contours calculated in ${performance.now() - _ti}ms`)
@@ -290,7 +300,7 @@ class ConceptMap {
       .domain(d3.extent(contours.map(i => i.value)))
       .range(ContourColors)
 
-    this.contours
+    this.vizLayers.contours
       .selectAll('path')
       .data(contours)
       .join('path')
@@ -308,7 +318,7 @@ class ConceptMap {
     const interpolateColor = i => d3.interpolateGreys(quantiles(i.n_items))
     const interpolateBG = i => d3.interpolateCool(quantiles(i.n_items))
 
-    this.markers
+    this.vizLayers.markers
       .selectAll('.marker')
       .data(data)
       .join('p')
@@ -322,27 +332,55 @@ class ConceptMap {
       .text(i => i.title)
       .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
       .on('click', (d, i, e) => viewportEvent.click({ source: i.kind, data: i }))
-    occlusion(this.viz_div, '.marker')
+    occlusion(this.vizLayers.markers, '.marker')
+  }
+
+  renderScatter = (nodes) => {
+    const scale = this.scale
+
+    this.vizLayers.scatter
+      .selectAll('.scatter')
+      .data(nodes)
+      .join('circle')
+        .attr('class', 'scatter')
+        .attr('r', 2)
+        .attr('cx', 0)
+        .attr('cy', 0)
+        .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
+        .on('click', (d, i, e) => {
+          // this.renderFocusNodes([i])
+          // viewportEvent.renderLabel(i)
+        })
   }
 
   updateTransformation = (transform, scale) => {
     // in-view nodes will have the transform/scale less than zero; greater than 1.
 
-    this.svg.select('g.contours')
+    this.vizLayers.contours
       .attr('transform', transform)
 
-    this.viz_div
+    this.vizLayers.scatter
+      .attr('data-zoomed', _ => transform.k >= 1.5 ? 'in' : 'out' )
+    this.vizLayers.scatter
+      .selectAll('.scatter')
+        .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
+
+    this.vizLayers.divroot
       .attr('data-zoomed', _ => transform.k >= 1.5 ? 'in' : 'out' )
 
-    this.markers
+    this.vizLayers.markers
       .selectAll('.marker')
-      .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
+        .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
+
+    this.vizLayers.selection
+      .selectAll('.marker')
+        .style('transform', i => `translate(${scale.x(i.x)}px, ${scale.y(i.y)}px)`)
   }
 
   updateLabelVisibility = _.debounce(() => {
     // We're fixing the visibility of labels. However we need to ensure the rules
     // are respected for each layer.
-    occlusion(this.viz_div, '.marker')
+    occlusion(this.vizLayers.markers, '.marker')
   }, 100, { trailing: true, leading: true })
 
   didZoom = (d, i, e) => {
@@ -362,8 +400,8 @@ class ConceptMap {
     // 0.5 - 1.5 -> level 1 portals get less and less visible.
     // this should better be done with a higher level function; f(transform).
 
-    const portalContainer = this.viz_div.select('.portals')
-    const markerContainer = this.viz_div.select('.markers')
+    const portalContainer = this.vizLayers.divroot.select('.portals')
+    const markerContainer = this.vizLayers.divroot.select('.markers')
 
     const labelTransition = d3.transition()
       .duration(TRANSITION_DURATION)
