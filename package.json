@@ -6,7 +6,7 @@
     "d3": "^6.2.0",
     "effector": "20.1.0",
     "file-saver": "^2.0.2",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "sass": "^1.26.12",
