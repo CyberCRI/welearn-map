@@ -1,7 +1,14 @@
 {
   "name": "welearn-map",
-  "version": "0.3.0",
-  "author": "Welearn Team",
+  "version": "0.4.0",
+  "author": "CRI Team",
+  "contributors": [
+    "prashnts",
+    "nicolasz-cri"
+  ],
+  "bugs": {
+    "url" : "https://github.com/CyberCRI/welearn-map/issues"
+  },
   "dependencies": {
     "d3": "^6.2.0",
     "effector": "20.1.0",
@@ -9,12 +16,18 @@
     "lodash": "^4.17.20"
   },
   "devDependencies": {
+    "@babel/cli": "^7.14.5",
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
     "sass": "^1.26.12",
     "sass-loader": "^10.0.2"
   },
-  "main": "src/index.js",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "repository": "github:CyberCRI/welearn-map",
   "scripts": {
-    "watch": "npm run --prefix examples/vuejs-map serve",
-    "build": "npm run --prefix examples/vuejs-map build"
+    "examples:watch": "npm run --prefix examples/vuejs-map serve",
+    "examples:build": "npm run --prefix examples/vuejs-map build",
+    "build": "babel src -d dist --copy-files"
   }
 }
